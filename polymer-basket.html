@@ -3,11 +3,34 @@
 <dom-module id="polymer-basket">
   <template>
     <style>
-      :host {
-        display: block;
-      }
+     :host {
+      display: block;
+      outline: 3px dashed black;
+      padding: 5px;
+    }
+
+    div {
+      align-self: baseline;
+      grid-area: basket;
+      justify-self: end;
+    }
+
+    .empty,
+    .filled {
+      border-radius: 5px;
+      color: white;
+      padding: 5px 10px;
+    }
+
+    .empty {
+      background-color: gray;
+    }
+
+    .filled {
+      background-color: seagreen;
+    }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+     <div class$="[[classname]]">basket: [[items.length]] item(s)</div>
   </template>
 
   <script>
@@ -20,12 +43,29 @@
      * @demo demo/index.html
      */
     class PolymerBasket extends Polymer.Element {
+
+      constructor() {
+        super();
+        window.addEventListener('buy:changed', this.update);
+      }
+
+      update(data) {
+        this.items.push(data.detail);
+      }
+
+      getClassName() {return this.items.length == 0  ? 'empty':'filled';}
+
       static get is() { return 'polymer-basket'; }
       static get properties() {
         return {
-          prop1: {
+          items: {
+            type: Array,
+            value: function() { return []; }
+          },
+
+          classname:{
             type: String,
-            value: 'polymer-basket'
+            computed: 'getClassName()'
           }
         };
       }
